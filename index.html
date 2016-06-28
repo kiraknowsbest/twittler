@@ -28,10 +28,10 @@
           <p id='colon'>:</p>
         </section>
         <section>
-          <input type='text'  id='text-box' placeholder='Write a new tweet...'>
+          <textarea rows="1" cols="25" id='text-box' placeholder='Write a new tweet...'></textarea>
         </section>
         <section>
-          <input type='button'  id='post-button' value='Post'>
+          <button  type="button" id='post-button'>Post</button>
         </section>
       </div>
       <div id='tweet-area'>
@@ -41,7 +41,6 @@
     <script>
     var visitor = "visitor";
       streams.users.visitor = [];
-      streams.users.visitor.pic='<img src="1.jpg">';
       $(document).ready(function(){
         var $tweetArea = $('#tweet-area');
         load(streams.home);
