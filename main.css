@@ -91,12 +91,14 @@ header h1:hover {
 	width: 750px;
 	height: 40px;
 	background-color: #50a0dc;
+	-webkit-appearance: none;
 }
 
 #tweet-bar section {
 	float: left;
 	color: #fff;
 	margin: 4px 5px 2px 0px;
+	-webkit-appearance: none;
 }
 
 #username {
