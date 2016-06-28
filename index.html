@@ -28,7 +28,7 @@
           <p id='colon'>:</p>
         </section>
         <section>
-          <textarea rows="1" cols="25" id='text-box' placeholder='Write a new tweet...'></textarea>
+          <input type="text" id='text-box' placeholder='Write a new tweet...'>
         </section>
         <section>
           <button  type="button" id='post-button'>Post</button>
@@ -88,6 +88,7 @@
             tweet = makeTweet(tweet);
             $tweetArea.children().first().after(tweet);
             $('#text-box').val("");
+            $('#text-box').attr("placeholder", "Write a new tweet...");
           }
         });
         $(document).keypress(function(e) {
@@ -100,6 +101,7 @@
               tweet = makeTweet(tweet);
               $tweetArea.children().first().after(tweet);
               $('#text-box').val("");
+              $('#text-box').attr("placeholder", "Write a new tweet...");
             }
 	      }
 		});
