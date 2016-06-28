@@ -1,27 +1,130 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link rel='stylesheet' href='main.css'>
     <script src="jquery.js"></script>
     <script src="data_generator.js"></script>
+    <script src="moment.min.js"></script>
+    <script type="text/javascript" src="jdenticon.min.js"></script>
+    <script src="md5.js"></script>
+    <script>
+      moment().format();
+    </script>
+    <title>Twittler - The Tweet App!</title>
   </head>
   <body>
+    <header>
+      <h1>Twittler</h1>
+    </header>
+    <div class='container'>
+      <div id='tweet-bar'>
+        <section>
+          <p id='username'>@visitor</p>
+        </section>
+        <section>
+          <img src='post.png' id='icon'>
+        </section>
+        <section>
+          <p id='colon'>:</p>
+        </section>
+        <section>
+          <input type='text'  id='text-box' placeholder='Write a new tweet...'>
+        </section>
+        <section>
+          <input type='button'  id='post-button' value='Post'>
+        </section>
+      </div>
+      <div id='tweet-area'>
+        <p id="refresh">Load new tweets</p>
+      </div>
+    </div>
     <script>
-
+    var visitor = "visitor";
+      streams.users.visitor = [];
+      streams.users.visitor.pic='<img src="1.jpg">';
       $(document).ready(function(){
-        var $body = $('body');
-        $body.html('');
-
-        var index = streams.home.length - 1;
-        while(index >= 0){
-          var tweet = streams.home[index];
-          var $tweet = $('<div></div>');
-          $tweet.text('@' + tweet.user + ': ' + tweet.message);
-          $tweet.appendTo($body);
-          index -= 1;
+        var $tweetArea = $('#tweet-area');
+        load(streams.home);
+        
+        function load(col){ //takes a collection & appends those tweets 
+          $tweetArea.html('<p id="refresh">Load new tweets</p>');
+          var index = col.length-1;
+          while(index >= 0){
+            var tweet = col[index];
+            tweet = makeTweet(tweet);
+            tweet.appendTo($tweetArea);
+            index -= 1;
+          }
         }
-
+        function makeTweet(tweet){  //creates a tweet div
+        	var $tweet = $('<div class="wrapper"><div class="profile-pic"></div><div class="message"></div><section class="username"></section><section class="time"></section></div>');
+          var hash = tweet.user.toString();
+          $tweet.find('.profile-pic').append($("<canvas/>").attr({ "width": 60, "height": 60 }).jdenticon(md5(hash)));
+          $tweet.find('.message').append('<p>'+tweet.message+'</p>');
+          $tweet.find('.username').append('<p>@'+tweet.user+'</p>');
+          var x = tweet.created_at.getTime();
+          var time = findTime(x);
+          $tweet.find('.time').append('<p>'+time+' ago</p');
+          return $tweet;
+        }
+        function findTime(x){  //finds time of a post
+        	var y = new Date().getTime();
+        	return moment.duration(y-x).humanize();
+        }
+        $('header').on('click','h1', function(event){
+          event.preventDefault();
+          load(streams.home);
+        });
+        $('#tweet-area').on('click', '#refresh', function(event){
+          event.preventDefault();
+          load(streams.home);
+        });
+        $('#tweet-bar').on('click', '#post-button', function(event){
+          event.preventDefault();
+          var text = $('#text-box').val();
+          if(text !== ""){
+            writeTweet(text);
+            var tweet = streams.users.visitor[streams.users.visitor.length-1];
+            tweet.created_at = new Date();
+            tweet = makeTweet(tweet);
+            $tweetArea.children().first().after(tweet);
+            $('#text-box').val("");
+          }
+        });
+        $(document).keypress(function(e) {
+		  if(e.which == 13) {
+            var text = $('#text-box').val();
+            if(text !== ""){
+              writeTweet(text);
+              var tweet = streams.users.visitor[streams.users.visitor.length-1];
+              tweet.created_at = new Date();
+              tweet = makeTweet(tweet);
+              $tweetArea.children().first().after(tweet);
+              $('#text-box').val("");
+            }
+	      }
+		});
+        $('#tweet-bar').on('click', '#username', function(){
+          load(streams.users.visitor);
+        });
+        $('#tweet-area').on('click', '.username', function(event){
+          event.preventDefault();
+          var name = $(this).text().slice(1);
+          load(streams.users[name]);
+        });
+        $('#tweet-area').on('click', '.profile-pic', function(event){
+          event.preventDefault();
+          var name = $(this).siblings('.username').text().slice(1);
+          load(streams.users[name]);
+        });
+        //post button effects
+        $('#post-button').on('mouseenter', function(){
+          $(this).css('background-color','#10a870');
+        });
+        $('#post-button').on('mouseleave', function(){
+          $(this).css('background-color','#30ca91');
+        });
       });
-
     </script>
   </body>
 </html>
